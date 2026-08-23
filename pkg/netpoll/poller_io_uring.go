@@ -22,8 +22,7 @@ import (
 	"github.com/panjf2000/gnet/v2/pkg/queue"
 )
 
-// errNotImplemented is returned by every io_uring operation until the
-// ring setup/submission/completion machinery is actually implemented.
+// errNotImplemented is returned by every io_uring operation until it is implemented.
 var errNotImplemented = errors.New("netpoll: io_uring poller is not implemented yet")
 
 // Poller represents a poller backed by io_uring which is in charge of monitoring file-descriptors.
