@@ -1,4 +1,4 @@
-// Copyright (c) 2019 The Gnet Authors. All rights reserved.
+// Copyright (c) 2026 The Gnet Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build linux && !io_uring_opt
+//go:build linux && io_uring_opt
 
 package netpoll
 
@@ -21,7 +21,7 @@ import "golang.org/x/sys/unix"
 // IOFlags represents the flags of IO events.
 type IOFlags = uint16
 
-// IOEvent is the integer type of I/O events on Linux.
+// IOEvent is the integer type of I/O events.
 type IOEvent = uint32
 
 const (
@@ -33,9 +33,9 @@ const (
 	MinPollEventsCap = 32
 	// MaxAsyncTasksAtOneTime is the maximum amount of asynchronous tasks that the event-loop will process at one time.
 	MaxAsyncTasksAtOneTime = 256
-	// ReadEvents represents readable events that are polled by epoll.
+	// ReadEvents represents readable events.
 	ReadEvents = unix.EPOLLIN | unix.EPOLLPRI
-	// WriteEvents represents writeable events that are polled by epoll.
+	// WriteEvents represents writeable events.
 	WriteEvents = unix.EPOLLOUT
 	// ReadWriteEvents represents both readable and writeable events.
 	ReadWriteEvents = ReadEvents | WriteEvents
@@ -56,27 +56,4 @@ func IsWriteEvent(event IOEvent) bool {
 // IsErrorEvent checks if the event is an error event.
 func IsErrorEvent(event IOEvent, _ IOFlags) bool {
 	return event&ErrEvents != 0
-}
-
-type eventList struct {
-	size   int
-	events []epollevent
-}
-
-func newEventList(size int) *eventList {
-	return &eventList{size, make([]epollevent, size)}
-}
-
-func (el *eventList) expand() {
-	if newSize := el.size << 1; newSize <= MaxPollEventsCap {
-		el.size = newSize
-		el.events = make([]epollevent, newSize)
-	}
-}
-
-func (el *eventList) shrink() {
-	if newSize := el.size >> 1; newSize >= MinPollEventsCap {
-		el.size = newSize
-		el.events = make([]epollevent, newSize)
-	}
 }

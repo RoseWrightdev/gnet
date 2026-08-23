@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build linux && poll_opt
+//go:build linux && poll_opt && !io_uring_opt
 
 package netpoll
 
